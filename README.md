@@ -1,5 +1,4 @@
 # KitaevSL
-Code for computing correlation functions of the Kitaev spin liquid
 
 These are the Matlab codes for computing finite temperature correlation 
 functions of the Kitaev spin liquid, an exotic many body physics model.
