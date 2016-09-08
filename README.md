@@ -39,9 +39,8 @@ outside the script first. The output is set in a .mat file, whose name is dynami
 created to contain the important parameters of the current calculation. There are
 also a few plots of the current expected error that are continuously updated 
 to allow the user to follow the progress.
-
-during the calculation for 
-The code diagonalizes
+ 
+flux_controller_final diagonalizes
 matrices in parallel. If you don't have the parallel toolbox you can just replace 'parfor'
 by 'for' and it will all run the same. 
 
