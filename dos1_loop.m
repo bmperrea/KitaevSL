@@ -8,6 +8,9 @@ function [En,Ev,dd,Dd,Ixx,Ixy,Ixy2] = dos1_loop(T,H,Rxx,Rxy,RxyA,RxyB,bins,emax)
 %operators Rs with {Rxx,Rxy,R[xy]A,R[xy]B} and the last two are for the two
 %sublattices
 
+%dd   DOS
+%Dd   two-particle DOS
+
 %Hard coded data
 %bins = 200;
 %emax = 12; 
