@@ -1,6 +1,6 @@
 /* initseq.c
  * 
- * Finds the Geyer statstics of the input vector (or each column of matrix)
+ * Finds the Geyer statstics of the input vector
  * This is a MEX file for MATLAB
 */
 
@@ -26,11 +26,14 @@ void mexFunction(int nlhs, mxArray *plhs[],
 		some careful checks */
     if( !mxIsDouble(prhs[0]) || 
          mxIsComplex(prhs[0])) {
-        mexErrMsgIdAndTxt("histwv:inputs","x must be type double.");
+        mexErrMsgIdAndTxt("initseq:inputs","x must be type double.");
     }
     
 	mwSize xN = (mwSize) mxGetN(prhs[0]); /* columns */
 	mwSize xM = (mwSize) mxGetM(prhs[0]); /* rows */
+    
+    if (xM > 1)
+        mexErrMsgIdAndTxt("initseq:inputs","x must be a row vector.");
         
     double *xreal = mxGetPr(prhs[0]);
     
