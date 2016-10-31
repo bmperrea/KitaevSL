@@ -1,11 +1,13 @@
-function [var_pos,var_dec,var_con,gamma_0] = initseq_vec(x)
+function [gamma_0,gamma_pos,gamma_dec,gamma_con,var_pos,var_dec,var_con] ...
+    = initseq(x);
 % initseq Help file.
-% [var_pos,var_dec,var_con,gamma_0] = initseq_vec(x)
+% [gamma_0,gamma_pos,gamma_dec,gamma_con,var_pos,var_dec,var_con] = ...
+% = initseq(x);
 %
 % Finds the Geyer statstics of the input vector. Typically used for Monte
 % Carlo algorithms.
 %
-% Input: x   matrix whose columns are 
+% Input: vector x
 % Output: [gamma_0,gamma_pos,gamma_dec,gamma_con,var_pos,var_dec,var_con]
 % gamma_0 is the usual variance, var_* are better estimates of the variance 
 % for a Markov chain while other gamma_* are intermediary variables in the
