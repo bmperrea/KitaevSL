@@ -37,21 +37,26 @@ void mexFunction(int nlhs, mxArray *plhs[],
     double *xreal = mxGetPr( mxCreateDoubleMatrix(1, xN, mxREAL) );
     mwSize len = xN;
     
+    
     double *gamma_zero_vec;
-    plhs[0] =  mxCreateDoubleMatrix(xM, 1, mxREAL);
-    gamma_zero_vec = mxGetPr( plhs[0] );
-    
     double *var_pos_vec;
-    plhs[1] =  mxCreateDoubleMatrix(xM, 1, mxREAL);
-    var_pos_vec = mxGetPr( plhs[1] );
-    
     double *var_dec_vec;
-    plhs[2] =  mxCreateDoubleMatrix(xM, 1, mxREAL);
-    var_dec_vec = mxGetPr( plhs[2] );
+    
+    if (nlhs > 1)
+    {    
+        plhs[3] =  mxCreateDoubleMatrix(xM, 1, mxREAL);
+        gamma_zero_vec = mxGetPr( plhs[3] );
+    
+        plhs[2] =  mxCreateDoubleMatrix(xM, 1, mxREAL);
+        var_pos_vec = mxGetPr( plhs[2] );
+
+        plhs[1] =  mxCreateDoubleMatrix(xM, 1, mxREAL);
+        var_dec_vec = mxGetPr( plhs[1] );        
+    }
     
     double *var_con_vec;
-    plhs[3] =  mxCreateDoubleMatrix(xM, 1, mxREAL);
-    var_con_vec = mxGetPr( plhs[3] );
+    plhs[0] =  mxCreateDoubleMatrix(xM, 1, mxREAL);
+    var_con_vec = mxGetPr( plhs[0] );
     
     /* actual code */
     int l;
@@ -148,9 +153,12 @@ void mexFunction(int nlhs, mxArray *plhs[],
         var_con -= gamma_zero;
         
         /* unload data to vector answers */
-        gamma_zero_vec[l] = gamma_zero;
-        var_pos_vec[l] = var_pos;
-        var_dec_vec[l] = var_dec;
+        if (nlhs > 1)
+        {
+            gamma_zero_vec[l] = gamma_zero;
+            var_pos_vec[l] = var_pos;
+            var_dec_vec[l] = var_dec;
+        }
         var_con_vec[l] = var_con;
     }
     
