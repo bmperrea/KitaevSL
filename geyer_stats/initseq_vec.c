@@ -30,12 +30,12 @@ void mexFunction(int nlhs, mxArray *plhs[],
         mexErrMsgIdAndTxt("initseq:inputs","x must be type double.");
     }
     
-	mwSize xN = (mwSize) mxGetN(prhs[0]); /* columns */
 	mwSize xM = (mwSize) mxGetM(prhs[0]); /* rows */
+	mwSize xN = (mwSize) mxGetN(prhs[0]); /* columns */
     
     double *x = mxGetPr(prhs[0]);
-    double *xreal = mxGetPr( mxCreateDoubleMatrix(1, xN, mxREAL) );
-    mwSize len = xN;
+    mwSize len = xM;
+    double *xreal = mxGetPr( mxCreateDoubleMatrix(len, 1, mxREAL) );
     
     
     double *gamma_zero_vec;
@@ -44,32 +44,32 @@ void mexFunction(int nlhs, mxArray *plhs[],
     
     if (nlhs > 1)
     {    
-        plhs[3] =  mxCreateDoubleMatrix(xM, 1, mxREAL);
+        plhs[3] =  mxCreateDoubleMatrix(1, xN, mxREAL);
         gamma_zero_vec = mxGetPr( plhs[3] );
     
-        plhs[2] =  mxCreateDoubleMatrix(xM, 1, mxREAL);
+        plhs[2] =  mxCreateDoubleMatrix(1, xN, mxREAL);
         var_pos_vec = mxGetPr( plhs[2] );
 
-        plhs[1] =  mxCreateDoubleMatrix(xM, 1, mxREAL);
+        plhs[1] =  mxCreateDoubleMatrix(1, xN, mxREAL);
         var_dec_vec = mxGetPr( plhs[1] );        
     }
     
     double *var_con_vec;
-    plhs[0] =  mxCreateDoubleMatrix(xM, 1, mxREAL);
+    plhs[0] =  mxCreateDoubleMatrix(1, xN, mxREAL);
     var_con_vec = mxGetPr( plhs[0] );
     
     /* actual code */
     int l;
-    for (l=0; l<xM; ++l) {
+    for (l=0; l<xN; ++l) {
     
-        double *buff = (double *)mxGetPr( mxCreateDoubleMatrix(xM, len/2, mxREAL) );    
+        double *buff = (double *)mxGetPr( mxCreateDoubleMatrix(len/2, 1, mxREAL) );    
         int i;
         double gamma_zero = 0.0; 
 
         /*Find the mean*/
         double mean = 0.0;
         for (i = 0; i<len; ++i) {
-            xreal[i] = x[l+i*xM];
+            xreal[i] = x[l*len+i];
             mean += xreal[i];
         }
         mean /= len;
@@ -120,8 +120,8 @@ void mexFunction(int nlhs, mxArray *plhs[],
             buff[j] -= buff[j - 1];
 
         /* Pool Adjacent Violators Algorithm (PAVA) */
-        double *puff = (double *)mxGetPr( mxCreateDoubleMatrix(xM, i, mxREAL) );
-        int *nuff = (int *)mxGetPr( mxCreateDoubleMatrix(xM, i, mxREAL) );
+        double *puff = (double *)mxGetPr( mxCreateDoubleMatrix(i, 1, mxREAL) );
+        int *nuff = (int *)mxGetPr( mxCreateDoubleMatrix(i, 1, mxREAL) );
         int nstep = 0;
         for (int j = 1; j < i; ++j) {
             puff[nstep] = buff[j];

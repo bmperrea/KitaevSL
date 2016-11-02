@@ -3,23 +3,24 @@
 % 1/error        energy           flux sector p
 % decisions      acorr time       raw sample var
 
-restart = true;
+restart = false;
 plotting= true;
 
 %These initial parameters define the problem/task for the code
-rmax = 6;
+rmax = 15;
 s = 0.04;
 b = 10;
 flag = -1; %(don't plot)
-T = 0.05;
+T = 0.015;
 
 
 stat_rate = 100;
 plot_rate = 1;
 
 prob_rand = 1/4;
-prob_shuffle = 1/4;
+prob_shuffle = 1/16; %Turns out shuffle proposals are slow.
 prob_move  = 1/4;
+% prob_NNN = 7/16
 
 numplaq = 1 + 3*rmax*(rmax+1); %The number of plaquettes
 
@@ -205,6 +206,33 @@ while ~happy
     
     %Decide whether to accept the proposal state
     accept = false;
+    
+    if decision == 4 %correct for different entropies of 2nd flux configs
+                     %This makes the proposal distribution reversible
+        num = numel(ps);
+        
+        % find number of new neighbors
+        numel(ps);
+        
+        fluxes1 = find(pbool1);
+        neighbors1 = fluxes1;
+        for ind = 1:numel(fluxes1)
+            flux = fluxes1(ind);   
+            %Convert plaquette number to polar coordinate data
+            [r,k,m] = get_polar(flux);            
+            %get the neighbors
+            nmax = 2;
+            ps1 = get_NNNNs(r,k,m,nmax);
+            ps1 = ps1(ps1<=numplaq); %remove the stuff outside the lattice
+            %add them in, removing duplicates
+            neighbors1 = unique( [neighbors1,ps1] );
+        end
+        
+        num1 = numel(ps1); 
+        
+        dEn = dEn - T*log(num/num1); 
+    end
+        
     if dEn < 0
         accept = true;
     else 
@@ -287,7 +315,7 @@ while ~happy
         acorrtime = stds(end,:).^2./raw_var;
         acorrtimes = [acorrtimes;acorrtime];
                 
-        raw_vars = [raw_vars ; raw_var];
+        raw_vars = [raw_vars ; raw_var./means];
         
         if max(error) < lowenough
             happy = true;

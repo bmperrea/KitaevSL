@@ -32,15 +32,19 @@ void mexFunction(int nlhs, mxArray *plhs[],
 	mwSize xN = (mwSize) mxGetN(prhs[0]); /* columns */
 	mwSize xM = (mwSize) mxGetM(prhs[0]); /* rows */
     
-    if (xM > 1)
-        mexErrMsgIdAndTxt("initseq:inputs","x must be a row vector.");
+    mwSize len;
+    if (xM > 1 & xN == 1) {
+        len = xM; }
+    else if (xM == 1 & xN >= 1) {
+        len = xN; }
+    else {
+        mexErrMsgIdAndTxt("initseq:inputs","x must be a vector."); 
+    }
         
     double *xreal = mxGetPr(prhs[0]);
     
     /* actual code */
-    
-    mwSize len = xN;
-    double *buff = (double *)mxGetPr( mxCreateDoubleMatrix(xM, len/2, mxREAL) );    
+    double *buff = (double *)mxGetPr( mxCreateDoubleMatrix(len/2, 1, mxREAL) );    
     int i;
     double gamma_zero = 0.0; 
     
@@ -81,7 +85,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
     }
     
     double *gamma_pos;
-    plhs[1] = mxCreateDoubleMatrix(xM, i, mxREAL); /* Create an empty array */
+    plhs[1] = mxCreateDoubleMatrix(i, 1, mxREAL); /* Create an empty array */
     gamma_pos = mxGetPr(plhs[1]);
     
     for (int j = 0; j < i; ++j)
@@ -92,7 +96,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
             buff[j] = buff[j - 1];
 
     double *gamma_dec;
-    plhs[2] = mxCreateDoubleMatrix(xM, i, mxREAL); /* Create an empty array */
+    plhs[2] = mxCreateDoubleMatrix(i, 1, mxREAL); /* Create an empty array */
     gamma_dec = mxGetPr(plhs[2]);    
     for (int j = 0; j < i; ++j)
         (gamma_dec)[j] = buff[j];
@@ -101,8 +105,8 @@ void mexFunction(int nlhs, mxArray *plhs[],
         buff[j] -= buff[j - 1];
 
     /* Pool Adjacent Violators Algorithm (PAVA) */
-    double *puff = (double *)mxGetPr( mxCreateDoubleMatrix(xM, i, mxREAL) );
-    int *nuff = (int *)mxGetPr( mxCreateDoubleMatrix(xM, i, mxREAL) );
+    double *puff = (double *)mxGetPr( mxCreateDoubleMatrix(i, 1, mxREAL) );
+    int *nuff = (int *)mxGetPr( mxCreateDoubleMatrix(i, 1, mxREAL) );
     int nstep = 0;
     for (int j = 1; j < i; ++j) {
         puff[nstep] = buff[j];
@@ -123,7 +127,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
     }
 
     double *gamma_con;
-    plhs[3] = mxCreateDoubleMatrix(xM, i, mxREAL); /* Create an empty array */
+    plhs[3] = mxCreateDoubleMatrix(i, 1, mxREAL); /* Create an empty array */
     gamma_con = mxGetPr(plhs[3]);  
     for (int j = 0; j < i; ++j)
         (gamma_con)[j] = buff[j];
