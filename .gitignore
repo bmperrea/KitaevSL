@@ -1,0 +1,9 @@
+# Matlab temporary files
+*.asv
+*.fig
+*.png
+*.jpg
+*.eps
+
+# Windows filesystem display settings
+desktop.ini

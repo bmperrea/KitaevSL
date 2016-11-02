@@ -1,5 +1,0 @@
-# Matlab temporary files
-*.asv
-
-# Windows filesystem display settings
-desktop.ini

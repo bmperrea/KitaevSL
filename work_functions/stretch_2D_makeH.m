@@ -29,7 +29,7 @@ c = s/(sqrt(3)*rmax+sqrt(3)/2);
 
 Bfield = -8*c*b;
 E0 = 3*sqrt(abs(Bfield));
-disp([Bfield,E0])
+%disp([Bfield,E0])
 
 %initial data
 imax = 6*(rmax+1)^2;
@@ -47,17 +47,17 @@ RxyA = Rxx;
 RxyB = Rxx;
 
 %Close the figures
-if nargin <= 5 || flag ~= -1
-    close all;
-    fav_fig = figure;
-    axis equal
-    lw=4; lw2 =2;
-    fs=26;
-end
+% if nargin <= 5 || flag ~= -1
+%     close all;
+%     fav_fig = figure;
+%     axis equal
+%     lw=4; lw2 =2;
+%     fs=26;
+% end
 % DD = zeros(size(Ev)); Dd = DD;
 % Ixx = DD; Iyy = DD; Ixy = DD; Ixyxx = DD; Ixyyy = DD; Ixxyy = DD;
 
-tic
+%tic
 
 %% Build the Hamiltonian and Raman matrices
 
@@ -76,12 +76,12 @@ i3 = 2;
 i4 = 1;
 i5 = 2;
 
-RxyA(i0,i4) = 1; draw_line2(r0,r4)
-RxyA(i4,i3) = 1; draw_line2(r4,r3)
-RxyA(i3,i0) = 1; draw_line2(r3,r0)
-RxyB(i1,i5) = 1; draw_line2(r1,r5)
-RxyB(i5,i2) = 1; draw_line2(r5,r2)
-RxyB(i2,i1) = 1; draw_line2(r2,r1)
+RxyA(i0,i4) = 1; %draw_line2(r0,r4)
+RxyA(i4,i3) = 1; %draw_line2(r4,r3)
+RxyA(i3,i0) = 1; %draw_line2(r3,r0)
+RxyB(i1,i5) = 1; %draw_line2(r1,r5)
+RxyB(i5,i2) = 1; %draw_line2(r5,r2)
+RxyB(i2,i1) = 1; %draw_line2(r2,r1)
 
 for r=0:rmax
     for k=0:5
@@ -112,7 +112,7 @@ for r=0:rmax
     end
     i5 = ind(r-1,l-1-2*k);
     
-    draw_text(r5,i5)
+%    draw_text(r5,i5)
     
 %     if r==rmax
 %         disp( dd(r0,r1,c) );
@@ -122,16 +122,16 @@ for r=0:rmax
         H  (i0,i1) = jj(r0,r1);
         Rxx(i0,i1) = jj(r0,r1)*dd(r0,r1,1)^2;
         Rxy(i0,i1) = jj(r0,r1)*dd(r0,r1,1)*dd(r0,r1,2); 
-        draw_line(r0,r1)
-        draw_text(r0,i0)
-        draw_text(r1,i1)
+%        draw_line(r0,r1)
+%        draw_text(r0,i0)
+%        draw_text(r1,i1)
         
         H  (i0,i2)   = jj(r0,r2);
         Rxx(i0,i2) = jj(r0,r2)*dd(r0,r2,1)^2;       
         Rxy(i0,i2) = jj(r0,r2)*dd(r0,r2,1)*dd(r0,r2,2);
-        draw_line(r0,r2)
-        draw_text(r2,i2)
-        draw_text(r4,i4)
+%        draw_line(r0,r2)
+%        draw_text(r2,i2)
+%        draw_text(r4,i4)
         
         if k == 0 && m == 1
             lmax = 6*(r^2 - (r-1)^2);
@@ -144,15 +144,15 @@ for r=0:rmax
         H  (i3,i2) = jj(r3,r2);
         Rxx(i3,i2) = jj(r3,r2)*dd(r3,r2,1)^2;
         Rxy(i3,i2) = jj(r3,r2)*dd(r3,r2,1)*dd(r3,r2,2);
-        draw_line(r3,r2)
-        draw_text(r3,i3)
+ %       draw_line(r3,r2)
+%        draw_text(r3,i3)
         
-        RxyA(i0,i4) = 1; draw_line2(r0,r4)
-        RxyA(i4,i3) = 1; draw_line2(r4,r3)
-        RxyA(i3,i0) = 1; draw_line2(r3,r0)
-        RxyB(i1,i5) = 1; draw_line2(r1,r5)
-        RxyB(i5,i2) = 1; draw_line2(r5,r2)
-        RxyB(i2,i1) = 1; draw_line2(r2,r1)
+        RxyA(i0,i4) = 1; %draw_line2(r0,r4)
+        RxyA(i4,i3) = 1; %draw_line2(r4,r3)
+        RxyA(i3,i0) = 1; %draw_line2(r3,r0)
+        RxyB(i1,i5) = 1; %draw_line2(r1,r5)
+        RxyB(i5,i2) = 1; %draw_line2(r5,r2)
+        RxyB(i2,i1) = 1; %draw_line2(r2,r1)
         
     else %k is odd        
         
@@ -160,33 +160,33 @@ for r=0:rmax
             lmin = 2;
             i4 = ind(r,lmin-1);
         end
-        draw_text(r4,i4)
+%        draw_text(r4,i4)
         
         H  (i1,i0) = jj(r0,r1);
         Rxx(i1,i0) = jj(r0,r1)*dd(r0,r1,1)^2;
         Rxy(i1,i0) = jj(r0,r1)*dd(r0,r1,1)*dd(r0,r1,2);
-        draw_line(r1,r0)
-        draw_text(r0,i0)
-        draw_text(r1,i1)
+%        draw_line(r1,r0)
+%        draw_text(r0,i0)
+%        draw_text(r1,i1)
         
         H  (i2,i0) = jj(r0,r2);
         Rxx(i2,i0) = jj(r0,r2)*dd(r0,r2,1)^2;
         Rxy(i2,i0) = jj(r0,r2)*dd(r0,r2,1)*dd(r0,r2,2);
-        draw_line(r2,r0)
-        draw_text(r2,i2)
+%        draw_line(r2,r0)
+%        draw_text(r2,i2)
         
         H  (i2,i3) = jj(r3,r2);
         Rxx(i2,i3) = jj(r3,r2)*dd(r3,r2,1)^2;
         Rxy(i2,i3) = jj(r3,r2)*dd(r3,r2,1)*dd(r3,r2,2); 
-        draw_line(r2,r3)
-        draw_text(r3,i3)
+%        draw_line(r2,r3)
+%        draw_text(r3,i3)
         
-        RxyB(i0,i4) = 1; draw_line2(r0,r4)
-        RxyB(i4,i3) = 1; draw_line2(r4,r3)
-        RxyB(i3,i0) = 1; draw_line2(r3,r0)
-        RxyA(i1,i5) = 1; draw_line2(r1,r5)
-        RxyA(i5,i2) = 1; draw_line2(r5,r2)
-        RxyA(i2,i1) = 1; draw_line2(r2,r1)
+        RxyB(i0,i4) = 1; %draw_line2(r0,r4)
+        RxyB(i4,i3) = 1; %draw_line2(r4,r3)
+        RxyB(i3,i0) = 1; %draw_line2(r3,r0)
+        RxyA(i1,i5) = 1; %draw_line2(r1,r5)
+        RxyA(i5,i2) = 1; %draw_line2(r5,r2)
+        RxyA(i2,i1) = 1; %draw_line2(r2,r1)
     end
      
         end
@@ -209,16 +209,16 @@ for r=0:rmax
             H(  i4,i1) = jj(r4,r1);   
             Rxx(i4,i1) = jj(r4,r1)*dd(r4,r1,1)^2; 
             Rxy(i4,i1) = jj(r4,r1)*dd(r4,r1,1)*dd(r4,r1,2);
-            draw_line(r1,r4)
-            draw_text(r4,i4)
-            draw_text(r1,i1)
+            %draw_line(r1,r4)
+            %%draw_text(r4,i4)
+            %draw_text(r1,i1)
         else %k is odd
             H(  i1,i4) = jj(r4,r1);   
             Rxx(i1,i4) = jj(r4,r1)*dd(r4,r1,1)^2; 
             Rxy(i1,i4) = jj(r4,r1)*dd(r4,r1,1)*dd(r4,r1,2);
-            draw_line(r4,r1)
-            draw_text(r4,i4)
-            draw_text(r1,i1)
+            %draw_line(r4,r1)
+            %draw_text(r4,i4)
+            %draw_text(r1,i1)
         end
     end 
 end
@@ -266,14 +266,14 @@ if p > numplaq/2
                 end
               
                 %Just need positions for drawing fluxes in the lattice pic
-                r0 = rr(r,k,m,0);     draw_text(r0,i0);
+                r0 = rr(r,k,m,0);     %draw_text(r0,i0);
  %               r1 = rr(r,k,m,1);     draw_text(r1,i1);
-                r2 = rr(r,k,m-1,1);   draw_text(r2,i2);
-                r3 = rr(r-1,k,m-1,0); draw_text(r3,i3);
+                r2 = rr(r,k,m-1,1);   %draw_text(r2,i2);
+                r3 = rr(r-1,k,m-1,0); %draw_text(r3,i3);
                % r4 = rr(r-1,k,m,0);  draw_text(r0,i0);
-                r5 = rr(r-1,k,m-1,1);   draw_text(r5,i5);
-                r7 = rr(r,k,m-1,0);   draw_text(r7,i7);
-                r8 = rr(r-1,k,m-2,1); draw_text(r8,i8);              
+                r5 = rr(r-1,k,m-1,1);  % draw_text(r5,i5);
+                r7 = rr(r,k,m-1,0);   %draw_text(r7,i7);
+                r8 = rr(r-1,k,m-2,1); %draw_text(r8,i8);              
 
                 %Change the bond for every other plaquette 
                     %going around each ring level
@@ -284,30 +284,30 @@ if p > numplaq/2
                     H  (i3,i2) = sn*H  (i3,i2);
                     Rxx(i3,i2) = sn*Rxx(i3,i2);
                     Rxy(i3,i2) = sn*Rxy(i3,i2);
-                    draw_line(r3,r2,H(i3,i2))
+                   % draw_line(r3,r2,H(i3,i2))
                   
                     RxyA(i3,i0) = sn*RxyA(i3,i0);
-                    draw_line2(r3,r0,RxyA(i3,i0))
+                  %  draw_line2(r3,r0,RxyA(i3,i0))
                     RxyB(i5,i2) = sn*RxyB(i5,i2);
-                    draw_line2(r5,r2,RxyB(i5,i2))
+                   % draw_line2(r5,r2,RxyB(i5,i2))
                     RxyA(i7,i3) = sn*RxyA(i7,i3);
-                    draw_line2(r7,r3,RxyA(i7,i3))
+                   % draw_line2(r7,r3,RxyA(i7,i3))
                     RxyB(i2,i8) = sn*RxyB(i2,i8);
-                    draw_line2(r2,r8,RxyB(i2,i8))
+                   % draw_line2(r2,r8,RxyB(i2,i8))
                 else
                     H  (i2,i3) = -sn2*H  (i2,i3);
                     Rxx(i2,i3) = -sn2*Rxx(i2,i3);
                     Rxy(i2,i3) = -sn2*Rxy(i2,i3);
-                    draw_line(r2,r3,H(i2,i3))
+                   % draw_line(r2,r3,H(i2,i3))
 
                     RxyB(i3,i0) = -sn2*RxyB(i3,i0);
-                    draw_line2(r3,r0,RxyB(i3,i0))
+                   % draw_line2(r3,r0,RxyB(i3,i0))
                     RxyA(i5,i2) = -sn2*RxyA(i5,i2);
-                    draw_line2(r5,r2,RxyA(i5,i2))
+                   % draw_line2(r5,r2,RxyA(i5,i2))
                     RxyB(i7,i3) = -sn2*RxyB(i7,i3);
-                    draw_line2(r7,r3,RxyB(i7,i3))
+                   % draw_line2(r7,r3,RxyB(i7,i3))
                     RxyA(i2,i8) = -sn2*RxyA(i2,i8); 
-                    draw_line2(r2,r8,RxyA(i2,i8))                       
+                   % draw_line2(r2,r8,RxyA(i2,i8))                       
                 end
                               
             end
@@ -425,7 +425,7 @@ end
 %Ryy = sparse(Ryy);
 %Rxy = sparse(Rxy);
 
-toc
+%toc
 %tic
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -679,16 +679,16 @@ end
             
             %These are only needed to draw the lattice picture!
             %Just need positions for drawing fluxes in the lattice pic
-            r0 = rr(0,0,0,0);     draw_text(r0,i0)
-            r1 = rr(0,0,0,1);     draw_text(r1,i1)
-            r2 = rr(0,0,-1,1);    draw_text(r2,i2)
-            r3 = rr(-1,0,-1,0);   draw_text(r3,i3)
+            r0 = rr(0,0,0,0);     %draw_text(r0,i0)
+            r1 = rr(0,0,0,1);     %draw_text(r1,i1)
+            r2 = rr(0,0,-1,1);    %draw_text(r2,i2)
+            r3 = rr(-1,0,-1,0);   %draw_text(r3,i3)
             %r4 = rr(r-1,k,m,0);  
             %r5 = rr(r-1,k,m,1);   %odd
             rc = 0;
             if rmax>rc
-                r6 = rr(1,0,0,1);     draw_text(r6,i6)
-                r7 = rr(0,0,-1,0);    draw_text(r7,i7)
+                r6 = rr(1,0,0,1);     %draw_text(r6,i6)
+                r7 = rr(0,0,-1,0);    %draw_text(r7,i7)
             end
             %r8 = rr(r-1,k,m-1,1);  
             
@@ -712,18 +712,18 @@ end
                 %These are only needed to draw the lattice picture!
                 %Just need positions for drawing fluxes in the lattice pic
     %            disp([r,k,m])
-                r0 = rr(rc,k,m,0);     draw_text(r0,i0)
-                r1 = rr(rc,k,m,1);     draw_text(r1,i1)
-                r2 = rr(rc,k,m-1,1);   draw_text(r2,i2)
-                r3 = rr(rc-1,k,m-1,0); draw_text(r3,i3)
+                r0 = rr(rc,k,m,0);     %draw_text(r0,i0)
+                r1 = rr(rc,k,m,1);     %draw_text(r1,i1)
+                r2 = rr(rc,k,m-1,1);   %draw_text(r2,i2)
+                r3 = rr(rc-1,k,m-1,0); %draw_text(r3,i3)
                 %r4 = rr(r-1,k,m,0);  draw_text(r4,i4)
                 %r5 = rr(r-1,k,m,1);   draw_text(r5,i5)
 
                 if rc < rmax
                     i6 = ind(rc+1,l+2*k+1);
                     i7 = ind(rc,l-2);
-                    r6 = rr(rc+1,k,m,1);   draw_text(r6,i6)
-                    r7 = rr(rc,k,m-1,0);   draw_text(r7,i7)
+                    r6 = rr(rc+1,k,m,1);   %draw_text(r6,i6)
+                    r7 = rr(rc,k,m-1,0);   %draw_text(r7,i7)
                     %r8 = rr(r-1,k,m-1,1);   
                 end
 
@@ -740,33 +740,33 @@ end
                 H  (i0,i2) = -H  (i0,i2);
                 Rxx(i0,i2) = -Rxx(i0,i2);
                 Rxy(i0,i2) = -Rxy(i0,i2);  
-                draw_line(r0,r2,H(i0,i2));
+                %draw_line(r0,r2,H(i0,i2));
                 RxyA(i3,i0) = -RxyA(i3,i0);
-                draw_line2(r3,r0,RxyA(i3,i0))
+                %draw_line2(r3,r0,RxyA(i3,i0))
                 RxyB(i2,i1) = -RxyB(i2,i1); 
-                draw_line2(r2,r1,RxyB(i2,i1))
+                %draw_line2(r2,r1,RxyB(i2,i1))
                 if rc < rmax
                     %disp([rc,rmax])
                     RxyA(i0,i7) = -RxyA(i0,i7);
-                    draw_line2(r0,r7,RxyA(i0,i7))
+                    %draw_line2(r0,r7,RxyA(i0,i7))
                     RxyB(i6,i2) = -RxyB(i6,i2); 
-                    draw_line2(r6,r2,RxyB(i6,i2))     
+                    %draw_line2(r6,r2,RxyB(i6,i2))     
                 end
             else
                 H  (i2,i0) = -H  (i2,i0);
                 Rxx(i2,i0) = -Rxx(i2,i0);
                 Rxy(i2,i0) = -Rxy(i2,i0);  
-                draw_line(r2,r0,H(i2,i0)); 
+                %draw_line(r2,r0,H(i2,i0)); 
 
                 RxyB(i3,i0) = -RxyB(i3,i0);
-                draw_line2(r3,r0,RxyB(i3,i0))
+                %draw_line2(r3,r0,RxyB(i3,i0))
                 RxyA(i2,i1) = -RxyA(i2,i1); 
-                draw_line2(r2,r1,RxyA(i2,i1))
+                %draw_line2(r2,r1,RxyA(i2,i1))
                 if rc < rmax
                     RxyB(i0,i7) = -RxyB(i0,i7);
-                    draw_line2(r0,r7,RxyB(i0,i7))
+                    %draw_line2(r0,r7,RxyB(i0,i7))
                     RxyA(i6,i2) = -RxyA(i6,i2); 
-                    draw_line2(r6,r2,RxyA(i6,i2))   
+                    %draw_line2(r6,r2,RxyA(i6,i2))   
                 end
             end
         
