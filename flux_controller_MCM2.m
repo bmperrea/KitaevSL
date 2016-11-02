@@ -1,14 +1,16 @@
-function outputs = flux_controller_MCMC(problem,T)
+%function outputs = flux_controller_MCMC(problem,T)
 %The input is a struct with the following variables.
-restart = problem.restart;
-plotting = problem.plotting;
+restart = true;% problem.restart;
+plotting = true;%problem.plotting;
 
-rmax = problem.rmax; %15
-s = problem.s; %0.04
-b = problem.b; %10
+T = 0.001;
 
-stat_rate = problem.stat_rate; %100;
-plot_rate = problem.plot_rate; %1;
+rmax = 6;
+s = 0.04;
+b = 10;
+
+stat_rate = 100;
+plot_rate = 1;
 
 %Probability of four different types of proposals
 prob_rand = 1/4;
@@ -345,7 +347,7 @@ while ~happy
             save(['stretch_mcmc_rmax_',num2str(round(rmax)),'_b_',num2str(round(b)),'_s_',num2str(1000*s),'_T_'...
                 num2str(round(T*1000))]...
             ,'dds','Ixxs','Ixys','Ixy2s','Ens','pss','decisions','happys',...
-            'ddst','Ixxst','Ixyst','Ixy2st','Enst','errors',...
+            'ddst','Ixxst','Ixyst','Ixy2st','Enst','ratios','errors',...
             'error','stds','acorrtimes','raw_vars','happy',...
             'pbool','count','H','Rxx','Rxy','RxyA','RxyB')
         catch
@@ -408,7 +410,7 @@ while ~happy
 %             plot(decisions);     
           
             %his = histogram(decisions,'Normalization','probability');
-            %his = histogram(decisions,'Normalization','probability');
+            his = histogram(decisions,'Normalization','probability');
             
             subplot(2,3,5)
            % hh = figure(h2);
@@ -488,28 +490,24 @@ if plotting
     xlabel('\omega/J');
     ylabel('I');
 end
-
-outputs.dd = dd;
-outputs.Ixx = Ixx;
-outputs.Ixy = Ixy;
-outputs.Ixy2 = Ixy2;
-outputs.En = En;
-outputs.p  = mean(pss);
-outputs.dde = dde;
-outputs.Ixxe = Ixxe;
-outputs.Ixye = Ixye;
-outputs.Ixy2e = Ixy2e;
-outputs.Ene   = Enst(end);
-outputs.pe    = sqrt( initseq_vec(pss(pts))/(count - start) );
-
-outputs.count = count;
-his = histogram(decisions,'Normalization','probability');
-outputs.decisions = his.Values;
-outputs.happy = happy;
-outputs.acorrtime = acorrtime;
-outputs.acorrtimeE = acorrtimeE;
-outputs.error = error;
-
-stopTime = clock;
-%disp(etime(stopTime,startTime));
-end
+% 
+% outputs.dd = dd;
+% outputs.Ixx = Ixx;
+% outputs.Ixy = Ixy;
+% outputs.Ixy2 = Ixy2;
+% outputs.En = En;
+% outputs.p  = mean(pss);
+% outputs.dde = dde;
+% outputs.Ixye = Ixye;
+% outputs.Ixy2e = Ixy2e;
+% outputs.Ene   = Enst(end);
+% outputs.pe    = sqrt( initseq_vec(pss(pts))/(count - start) );
+% 
+% outputs.count = count;
+% outputs.decisions = his.Values;
+% outputs.happy = happy;
+% outputs.acorrtime = acorrtime;
+% outputs.acorrtimeE = acorrtimeE;
+% outputs.error = error;
+% 
+% end

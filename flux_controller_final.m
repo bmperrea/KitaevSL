@@ -57,8 +57,7 @@ Tc = .13/log(numplaq); disp(Tc)
 Tv = sort( [Tc*Trel, Tcomp] ); 
 
 disp(Tv)
-    %Temperatures to plot against (skip the high temps to keep it easy to
-        %look at)
+    
 Tvis = (Tv <= 3*Tc);
 
 
