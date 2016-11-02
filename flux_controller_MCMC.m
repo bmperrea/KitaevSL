@@ -1,9 +1,9 @@
 % Plot key
 %
 % 1/error        energy           flux sector p
-% decisions      acorr time       raw sample var
+% decisions      acorr time       Energy acorr time
 
-restart = false;
+restart = true;
 plotting= true;
 
 %These initial parameters define the problem/task for the code
@@ -13,20 +13,20 @@ b = 10;
 flag = -1; %(don't plot)
 T = 0.015;
 
-
 stat_rate = 100;
 plot_rate = 1;
 
 prob_rand = 1/4;
-prob_shuffle = 1/16; %Turns out shuffle proposals are slow.
+prob_shuffle = 1/100; %Turns out shuffle proposals are slow, so I made them rare.
 prob_move  = 1/4;
-% prob_NNN = 7/16
+% prob_NNN = 0.49
 
 numplaq = 1 + 3*rmax*(rmax+1); %The number of plaquettes
 
 
 startTime = clock;
 lowenough = 1/(65); %65 appears to be the default number of bins in the default colormap in my version of matlab
+    %This is the error tolerance relative to the mean
 
 %Whether to plot 
 plotting = true;
@@ -90,6 +90,10 @@ if restart
     raw_vars = [];
     errors   = [];
     acorrtimes = [];
+    acorrtimeEs =[];
+    
+    start = 1;
+    chopped = false;
 
     %Initialize a bunch of storage variables.
     count = 0;
@@ -283,12 +287,21 @@ while ~happy
     if mod(count,stat_rate) == 0 && changed
 
         %Do some error analysis and update the error chains.
-
-        ddt    = initseq_vec(dds.');
-        Ixxt   = initseq_vec(cast(Ixxs.','double'));
-        Ixyt  = initseq_vec(cast(Ixys.','double'));
-        Ixy2t = initseq_vec(cast(Ixy2s.','double'));
-        Ent   = initseq_vec(Ens.');  
+        
+        %only use around 2000 points in variance estimate
+        if count-start < 4000
+            factor = 1;
+            pts = start:count;
+        else
+            factor = (count-start)/2000;
+            pts = round( start+(1:2000)*factor );
+        end
+                
+        ddt    = initseq_vec( dds(pts,:) ).' * factor;
+        Ixxt   = initseq_vec(cast(Ixxs(pts,:),'double')).' * factor;
+        Ixyt  = initseq_vec(cast(Ixys(pts,:),'double')).' * factor;
+        Ixy2t = initseq_vec(cast(Ixy2s(pts,:),'double')).' * factor;
+        Ent   = initseq_vec(Ens(pts,:)).';  
 
         ddst   = [ ddst  ; reshape(ddt  ,1,bins) ];
         Ixxst  = [ Ixxst ; reshape(Ixxt ,1,bins) ];
@@ -302,20 +315,22 @@ while ~happy
                     sqrt(mean(Ixyst.'));...
                     sqrt(mean(Ixy2st.'))].';
                 
-        means = [max(mean(dds)),max(mean(Ixxs.')),max(mean(Ixys.')),...
-                    max(mean(Ixy2s.'))];
+        means = [mean(dd),mean(Ixx),mean(Ixy),mean(Ixy2)];
                 
         error = ( stds(end,:)./means ) ./ sqrt(count);
                 
         errors = [errors ; error];
         
-        raw_var = [mean(var(dds)),mean(var(Ixxs)),...
-                    mean(var(Ixys)),mean(var(Ixy2s))];
+        raw_var = [mean(var(dds(pts,:))),mean(var(Ixxs(pts,:))),...
+                    mean(var(Ixys(pts,:))),mean(var(Ixy2s(pts,:)))]*factor;
                 
         acorrtime = stds(end,:).^2./raw_var;
         acorrtimes = [acorrtimes;acorrtime];
-                
-        raw_vars = [raw_vars ; raw_var./means];
+        
+        acorrtimeE = Ent / var(Ens(pts,:));
+        acorrtimeEs = [acorrtimeEs ; acorrtimeE];
+                        
+        raw_vars = [raw_vars ; raw_var];
         
         if max(error) < lowenough
             happy = true;
@@ -338,6 +353,18 @@ while ~happy
             disp('couldnt save')
         end
         
+        %decide to chop off the beginning part
+        rawacorrtimeE = initseq_vec(Ens) / var(Ens);
+        if count > 5*rawacorrtimeE 
+            acorrtimeE2 = initseq_vec(Ens(pts(pts>acorrtimeE))) ...
+                                / var(Ens(pts(pts>acorrtimeE)));
+            if acorrtimeE2 < 0.7 * rawacorrtimeE
+                %Then we should chop off the beginning.
+                start = ceil(rawacorrtimeE);
+                chopped = true;
+                chopPoint = count;
+            end
+        end
         
         if mod(count,stat_rate*plot_rate) == 0 && plotting
             %Plot some error diagnostics
@@ -381,6 +408,7 @@ while ~happy
 %             ylabel('decision');   
 %             plot(decisions);     
           
+            %his = histogram(decisions,'Normalization','probability');
             histogram(decisions,'Normalization','probability');
             
             subplot(2,3,5)
@@ -388,12 +416,16 @@ while ~happy
             plot(acorrtimes)
             
             subplot(2,3,6)
-            plot(raw_vars);
+            %plot(raw_vars);
+            plot(acorrtimeEs);
+            if chopped
+                 refline(Inf,chopPoint/(stat_rate*plot_rate));
+            end
             
             pause(.001) %Make sure the plots show up.
-        end    
-        
-        his = histogram(decisions,'Normalization','probability');
+        else
+            %his = histogram(decisions,'Normalization','probability');
+        end
             
         %if we are in a high flux regime 
         %increase probability of shuffle.
@@ -415,27 +447,27 @@ end
 % Throw out annealing stage to get a better sample mean
     % This can be the initial sequence up to the first time the energy is
     % within "1 std" of the mean. Here std is ~sqrt(N)*sqrt(var)
-Estd  = sqrt(En) * sqrt( stat_rate*numel(En) );
-reasonables = find(Estd < mean(Ens) + Estd);
-if reasonables(1) > count/2
-    warning('It took forever to anneal?')
-end
-start_err = floor(reasonables(1)/stat_rate);
-start = start_err * stat_rate + 1;
-start_err = start_err + 1;
+% Estd  = sqrt(En) * sqrt( stat_rate*numel(En) );
+% reasonables = find(Estd < mean(Ens) + Estd);
+% if reasonables(1) > count/2
+%     warning('It took forever to anneal?')
+% end
+% start_err = floor(reasonables(1)/stat_rate);
+% start = start_err * stat_rate + 1;
+% start_err = start_err + 1;
 
-dds2   = dds(start:end,:);
-Ixxs2  = Ixxs(start:end,:);
-Ixys2  = Ixys(start:end,:) ;
-Ixy2s2 = Ixy2s(start:end,:);
-Ens2 =   Ens(start:end,:)  ;
+% dds2   = dds(start:end,:);
+% Ixxs2  = Ixxs(start:end,:);
+% Ixys2  = Ixys(start:end,:) ;
+% Ixy2s2 = Ixy2s(start:end,:);
+% Ens2 =   Ens(start:end,:)  ;
 
 % compute means
-dd = mean(dds2);
-Ixx = mean(Ixxs2);
-Ixy = mean(Ixys2);
-Ixy2 = mean(Ixy2s2);
-En   = mean(Ens2);
+dd = mean(dds);
+Ixx = mean(Ixxs);
+Ixy = mean(Ixys);
+Ixy2 = mean(Ixy2s);
+En   = mean(Ens);
 
 % Redo error analysis? (Nope)
 dde = ddst(end,:);
