@@ -1,10 +1,15 @@
+function do_some_mcmc(problem)
+%The input is a struct with the following variables.
+restart = problem.restart;
+plotting = problem.plotting'
+
+
+
 % Plot key
 %
 % 1/error        energy           flux sector p
 % decisions      acorr time       Energy acorr time
 
-restart = true;
-plotting= true;
 
 %These initial parameters define the problem/task for the code
 rmax = 15;
@@ -317,7 +322,7 @@ while ~happy
                 
         means = [mean(dd),mean(Ixx),mean(Ixy),mean(Ixy2)];
                 
-        error = ( stds(end,:)./means ) ./ sqrt(count);
+        error = ( stds(end,:)./means ) ./ sqrt(count - start);
                 
         errors = [errors ; error];
         
