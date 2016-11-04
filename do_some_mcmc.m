@@ -36,7 +36,7 @@ close all
 
 %Main Loop
 
-for j = 14:numel(Tv) 
+for j = flip(15:numel(Tv))
    tic
    if j<14
        problem.restart = false;

@@ -305,7 +305,7 @@ while ~happy && ~maxed
         Ixxt  = initseq_batch( Ixxs(pts,:) , max_batches).';
         Ixyt  = initseq_batch( Ixys(pts,:) , max_batches).';
         Ixy2t = initseq_batch( Ixy2s(pts,:) , max_batches).';
-        Ent   = initseq_vec(Ens(pts,:)).';  
+        Ent   = initseq_matlab_vec(Ens(pts,:)).';  
 %         Ixxt  = initseq_vec(cast(Ixxs(pts,:),'double')).' * factor;
 %         Ixyt  = initseq_vec(cast(Ixys(pts,:),'double')).' * factor;
 %         Ixy2t = initseq_vec(cast(Ixy2s(pts,:),'double')).' * factor;
@@ -362,9 +362,9 @@ while ~happy && ~maxed
         end
         
         %decide to chop off the beginning part
-        rawacorrtimeE = initseq_vec(Ens) / var(Ens);
+        rawacorrtimeE = initseq_matlab_vec(Ens) / var(Ens);
         if count > 5*rawacorrtimeE 
-            acorrtimeE2 = initseq_vec(Ens(pts(pts>acorrtimeE))) ...
+            acorrtimeE2 = initseq_matlab_vec(Ens(pts(pts>acorrtimeE))) ...
                                 / var(Ens(pts(pts>acorrtimeE)));
             if acorrtimeE2 < 0.7 * rawacorrtimeE
                 %Then we should chop off the beginning.
@@ -528,7 +528,7 @@ outputs.Ixxe = Ixxe;
 outputs.Ixye = Ixye;
 outputs.Ixy2e = Ixy2e;
 outputs.Ene   = Enst(end);
-outputs.pe    = sqrt( initseq_vec(pss(pts))/(count - start) );
+outputs.pe    = sqrt( initseq_matlab_vec(pss(pts))/(count - start) );
 
 outputs.count = count;
 his = histogram(decisions,'Normalization','probability');
