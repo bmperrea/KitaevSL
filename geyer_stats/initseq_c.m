@@ -1,5 +1,5 @@
 function [gamma_0,gamma_pos,gamma_dec,gamma_con,var_pos,var_dec,var_con] ...
-    = initseq(x)
+    = initseq_c(x)
 % initseq Help file.
 % [gamma_0,gamma_pos,gamma_dec,gamma_con,var_pos,var_dec,var_con] = ...
 % = initseq(x);

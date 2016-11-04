@@ -13,7 +13,7 @@ function var_con = initseq_batch(x,nbatches)
     maxy = (nbatches*batch_size);
     pts = (1:maxy) + (rows-maxy); %prefer to sample the end of the chain
     for j=1:cols
-        var_con(j) = initseq_vec(double(mean(reshape( x(pts,j), batch_size, nbatches),1)).');
+        var_con(j) = initseq_matlab(mean(reshape( x(pts,j), batch_size, nbatches),1).');
     end
     var_con = var_con * batch_size;
 end

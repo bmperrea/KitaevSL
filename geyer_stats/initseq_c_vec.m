@@ -1,4 +1,4 @@
-function [var_pos,var_dec,var_con,gamma_0] = initseq_vec(x)
+function [var_pos,var_dec,var_con,gamma_0] = initseq_c_vec(x)
 % initseq Help file.
 % [var_pos,var_dec,var_con,gamma_0] = initseq_vec(x)
 %
