@@ -4,6 +4,8 @@ These are the Matlab codes for computing finite correlation
 functions of the Kitaev spin liquid, an exotic many body physics model,
 including finite temperature correlation functions.
 
+For details about the Geyer initseq functions see [this wiki page](wiki/Geyer-stats-in-Matlab).
+
 ### Usage and function
 
 One can begin by running the following to compute the Raman spectra
