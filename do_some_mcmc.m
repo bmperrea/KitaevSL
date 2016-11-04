@@ -38,6 +38,11 @@ close all
 
 for j = 1:numel(Tv) 
    tic
+   if j<14
+       problem.restart = false;
+   else
+       problem.restart = true;
+   end
    outputs{j} = flux_controller_MCMC(problem,Tv(j));
    disp(j)
    toc
