@@ -8,7 +8,7 @@
     /* Conversions table From R extentions
      *
      * Real -> mxIsDouble (do a check, cast shouldn't be needed)
-     * SEXP -> mwsize or mx*
+     * SEXP -> int or mx*
      * Protect -> Nothing. Memory can be moved around by R functions, but 
      *                      there isn't an analogous thing in mex.
      * R_alloc -> mxCreate* , mxMalloc* ,... or something
@@ -30,11 +30,11 @@ void mexFunction(int nlhs, mxArray *plhs[],
         mexErrMsgIdAndTxt("initseq:inputs","x must be type double.");
     }
     
-	mwSize xM = (mwSize) mxGetM(prhs[0]); /* rows */
-	mwSize xN = (mwSize) mxGetN(prhs[0]); /* columns */
+	int xM = (int) mxGetM(prhs[0]); /* rows */
+	int xN = (int) mxGetN(prhs[0]); /* columns */
     
     double *x = mxGetPr(prhs[0]);
-    mwSize len = xM;
+    int len = xM;
     double *xreal = mxGetPr( mxCreateDoubleMatrix(len, 1, mxREAL) );
     
     
