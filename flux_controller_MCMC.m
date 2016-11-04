@@ -10,6 +10,9 @@ b = problem.b; %10
 stat_rate = problem.stat_rate; %100;
 plot_rate = problem.plot_rate; %1;
 
+max_batches = problem.max_batches;
+max_count = problem.max_count;
+
 %Probability of four different types of proposals
 prob_rand = 1/4;
 prob_shuffle = 1/100; %Turns out shuffle proposals are slow, so I made them rare.
@@ -98,6 +101,7 @@ if restart
     count = 0;
     decision = 0;
     happy = false;
+    maxed = false;
 end
 
 
@@ -120,7 +124,7 @@ end
 %h2 = figure;
 
 % MCMC main loop
-while ~happy
+while ~happy && ~maxed
 
     count = count + 1;
     
@@ -288,19 +292,24 @@ while ~happy
         %Do some error analysis and update the error chains.
         
         %only use around 2000 points in variance estimate
-        if count-start < 4000
-            factor = 1;
-            pts = start:count;
-        else
-            factor = (count-start)/2000;
-            pts = round( start+(1:2000)*factor );
-        end
+%         if count-start < 4000
+%             factor = 1;
+%             pts = start:count;
+%         else
+%             factor = (count-start)/2000;
+%             pts = round( start+(1:2000)*factor );
+%         end
+        pts = (start:count);
                 
-        ddt    = initseq_vec( dds(pts,:) ).' * factor;
-        Ixxt   = initseq_vec(cast(Ixxs(pts,:),'double')).' * factor;
-        Ixyt  = initseq_vec(cast(Ixys(pts,:),'double')).' * factor;
-        Ixy2t = initseq_vec(cast(Ixy2s(pts,:),'double')).' * factor;
+        ddt   = initseq_batch( dds(pts,:) , max_batches ).';
+        Ixxt  = initseq_batch( Ixxs(pts,:) , max_batches).';
+        Ixyt  = initseq_batch( Ixys(pts,:) , max_batches).';
+        Ixy2t = initseq_batch( Ixy2s(pts,:) , max_batches).';
         Ent   = initseq_vec(Ens(pts,:)).';  
+%         Ixxt  = initseq_vec(cast(Ixxs(pts,:),'double')).' * factor;
+%         Ixyt  = initseq_vec(cast(Ixys(pts,:),'double')).' * factor;
+%         Ixy2t = initseq_vec(cast(Ixy2s(pts,:),'double')).' * factor;
+%         Ent   = initseq_vec(Ens(pts,:)).';  
 
         ddst   = [ ddst  ; reshape(ddt  ,1,bins) ];
         Ixxst  = [ Ixxst ; reshape(Ixxt ,1,bins) ];
@@ -321,7 +330,7 @@ while ~happy
         errors = [errors ; error];
         
         raw_var = [mean(var(dds(pts,:))),mean(var(Ixxs(pts,:))),...
-                    mean(var(Ixys(pts,:))),mean(var(Ixy2s(pts,:)))]*factor;
+                    mean(var(Ixys(pts,:))),mean(var(Ixy2s(pts,:)))];
                 
         acorrtime = stds(end,:).^2./raw_var;
         acorrtimes = [acorrtimes;acorrtime];
@@ -368,7 +377,7 @@ while ~happy
         if mod(count,stat_rate*plot_rate) == 0 && plotting
             %Plot some error diagnostics
             hh = figure(h0); %hold on;
-            subplot(2,3,1)
+            subplot(2,4,1)
             title('1/ max mean err')
            % xlabel('cycles');
           %  ylabel('Inverse Max (over observable) mean (over E) Error');
@@ -380,21 +389,21 @@ while ~happy
             
             %Plot some other things
         %    hh = figure(h1); %hold on;
-        subplot(2,3,2)
+        subplot(2,4,2)
             title('Energy')
         %    xlabel('cycles');
         %    ylabel('E/J');   
             plot(Ens);   
             
         %    hh = figure(h2); %hold on;
-        subplot(2,3,3)
+        subplot(2,4,3)
             title('flux sector')
             xlabel('cycles');
             ylabel('p');   
             plot(pss);  
             
           %  hh = figure(h3);
-          subplot(2,3,4)
+          subplot(2,4,5)
          %   title('sample variances')
         %    xlabel('cycles');
         %    ylabel('variance');   
@@ -408,18 +417,33 @@ while ~happy
 %             plot(decisions);     
           
             %his = histogram(decisions,'Normalization','probability');
-            %his = histogram(decisions,'Normalization','probability');
+            his = histogram(decisions,'Normalization','probability');
             
-            subplot(2,3,5)
+            subplot(2,4,6)
            % hh = figure(h2);
             plot(acorrtimes)
             
-            subplot(2,3,6)
+            subplot(2,4,7)
             %plot(raw_vars);
             plot(acorrtimeEs);
             if chopped
                  refline(Inf,chopPoint/(stat_rate*plot_rate));
             end
+            
+            subplot(2,4,4)
+            dd1 = mean(dds(pts,:)).';
+            dde = sqrt(ddt./(count-start));
+            %errorbar(Ev,dd1,);
+            plot(Ev,dd1,Ev,dd1-dde,Ev,dd1+dde)
+            axis([0,emax,-inf,inf])
+            
+            subplot(2,4,8)
+            Ixy21 = mean(Ixy2s(pts,:)).';
+            Ixy2e = sqrt(Ixy2t./(count-start));
+            %errorbar(Ev,Ixy21,);
+            plot(Ev,Ixy21,Ev,Ixy21-Ixy2e,Ev,Ixy21+Ixy2e)
+            axis([0,emax,-inf,inf])
+            
             
             pause(.001) %Make sure the plots show up.
         else
@@ -435,6 +459,10 @@ while ~happy
 %         end
         
     end    
+    
+    if count == max_count
+        maxed = true; 
+    end
     
    % disp(accept)
     

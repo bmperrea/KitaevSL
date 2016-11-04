@@ -1,14 +1,20 @@
 %This script runs parallel mcmc runs for different temperatures
 startTime = clock;
 
-problem.restart = true;
-problem.plotting = false;
+problem.restart = true; %Whether to start from the last run
+problem.plotting = true; %used for real time debugging/diagnostics
 
-problem.rmax = 6;
-problem.s = 0.04;
-problem.b = 10;
-problem.stat_rate = 100;
-problem.plot_rate = 1;
+problem.rmax = 15; %radius of honeycomb flake in plaquettes
+problem.s = 0.04; %stretch amount
+problem.b = 10;   % magnetic grunesien parameter
+problem.stat_rate = 100; %How many proposals before recomputing statistics
+problem.plot_rate = 1; %how many statistics before plotting
+problem.max_batches = 2000;
+problem.max_count = 50000; %50,000
+
+rmax = problem.rmax;
+s = problem.s;
+b = problem.b;
 
 Trel = [0.001,.01,.1,.25,.35,.4,.45,.5,.55,.575,.6,.625,.65,.675,.7,.725,...
     .75,.775,.8,.825,.85,.875,.9,.925,.95,...
@@ -16,18 +22,21 @@ Trel = [0.001,.01,.1,.25,.35,.4,.45,.5,.55,.575,.6,.625,.65,.675,.7,.725,...
     20,30,40,50,60,70,80,100,1000,10000];
 Tcomp = [.15,3,29.2,.03,.054,.078]; 
 
+numplaq = 3*problem.rmax*(problem.rmax + 1) + 1;
 Tc = .13/log(numplaq); disp(Tc)
 
 Tv = sort( [Tc*Trel, Tcomp] ); 
 
 %Tv = Tv(1:5);
+emax = 12.0; bins = 200;
+Ev = (1:bins)'*emax/bins; limsE = Ev;
 
 format compact
 close all
 
 %Main Loop
 
-parfor j = 1:numel(Tv) 
+for j = 1:numel(Tv) 
    tic
    outputs{j} = flux_controller_MCMC(problem,Tv(j));
    disp(j)
@@ -65,8 +74,6 @@ savePlots = true;
 %Temperatures to plot against (skip the high temps to keep it easy to
         %look at)
 Tvis = (Tv <= 3*Tc);
-emax = 12.0; bins = 200;
-Ev = (1:bins)'*emax/bins; limsE = Ev;
 prep_plots;
 
   %I versus T and E (II)
