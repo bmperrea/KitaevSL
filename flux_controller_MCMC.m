@@ -15,9 +15,9 @@ max_count = problem.max_count;
 
 %Probability of four different types of proposals
 prob_rand = 1/4;
-prob_shuffle = 1/100; %Turns out shuffle proposals are slow, so I made them rare.
+prob_shuffle = 1/5;
 prob_move  = 1/4;
-% prob_NNN = 0.49
+% prob_NNN = 0.3
 
 
 % Plot key
@@ -35,7 +35,7 @@ lowenough = 1/(65); %65 appears to be the default number of bins in the default 
 %Whether to plot 
 
 %save the command window to text file
-fileN = ['stretch_mcmc_diary_rmax_',num2str(round(rmax)),'_b_',num2str(round(b)),'_s_',num2str(1000*s)];
+fileN = ['stretch_mcmc_diary_rmax_',num2str(round(rmax)),'_b_',num2str(round(b)),'_s_',num2str(round(1000*s))];
 diary(fileN)
 diary on
 
@@ -48,13 +48,13 @@ Ev = (1:bins)'*emax/bins;
 emax = max(Ev);
 
 %Get the base Hamiltonian
-H = stretch_2D_makeH(rmax,b,s,0);
-En00 = -sum(svd(H)); %Tracks the ground state energy
+[H0,Rxx0,Rxy0,RxyA0,RxyB0,pbool0,En00] = stretch_2D_makeH(rmax,b,s,0);
+En00; %Tracks the ground state energy
 
 % Set a base gauge 
 try %start from previous run
-    load(['stretch_mcmc_rmax_',num2str(round(rmax)),'_b_',num2str(round(b)),'_s_',num2str(1000*s),'_T_'...
-        num2str(round(T*1000))])
+    load(['stretch_mcmc_rmax_',num2str(round(rmax)),'_b_',num2str(round(b)),'_s_',num2str(round(1000*s)),'_T_'...
+        num2str(round(T*10000))])
 catch 
     restart = true;
 end
@@ -82,6 +82,8 @@ if restart
     happys = false;
     changed = false;
     pss = p0;
+    
+    phist = zeros(1,numplaq);
 
     ddst   = dds;
     Ixxst  = Ixxs;
@@ -129,7 +131,6 @@ while ~happy && ~maxed
     count = count + 1;
     
 %% Proposal
-
 
     ra = rand;
     if sum(pbool) == 0 || ra < prob_rand
@@ -202,7 +203,7 @@ while ~happy && ~maxed
     if decision == 2
         %Take a new random set of fluxes with same number.
         p = sum(pbool);
-        [H1,Rxx1,Rxy1,RxyA1,RxyB1,pbool1] = stretch_2D_makeH(rmax,b,s,p);         
+        [H1,Rxx1,Rxy1,RxyA1,RxyB1,pbool1] = set_gauge(rmax,p,H0,Rxx0,Rxy0,RxyA0,RxyB0);         
     end
     
     
@@ -287,6 +288,8 @@ while ~happy && ~maxed
     decisions = [decisions;decision];
     happys = [happys; happy];
 
+    phist = phist + pbool;
+    
     if mod(count,stat_rate) == 0 && changed
 
         %Do some error analysis and update the error chains.
@@ -351,12 +354,12 @@ while ~happy && ~maxed
         
         %Save the data everytime we compute error
         try
-            save(['stretch_mcmc_rmax_',num2str(round(rmax)),'_b_',num2str(round(b)),'_s_',num2str(1000*s),'_T_'...
-                num2str(round(T*1000))]...
+            save(['stretch_mcmc_rmax_',num2str(round(rmax)),'_b_',num2str(round(b)),'_s_',num2str(round(1000*s)),'_T_'...
+                num2str(round(T*10000))]...
             ,'dds','Ixxs','Ixys','Ixy2s','Ens','pss','decisions','happys',...
             'ddst','Ixxst','Ixyst','Ixy2st','Enst','errors',...
             'error','stds','acorrtimes','raw_vars','happy',...
-            'pbool','count','H','Rxx','Rxy','RxyA','RxyB','start','pts')
+            'pbool','count','H','Rxx','Rxy','RxyA','RxyB','start','pts','phist')
         catch
             disp('couldnt save')
         end

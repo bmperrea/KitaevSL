@@ -1,0 +1,9 @@
+#!/bin/bash -l 
+#PBS -l walltime=24:00:00,nodes=1:ppn=24,mem=2580mb
+#PBS -m abe
+#PBS -M perre035@umn.edu
+
+cd ~/kitaev
+module load matlab
+matlab -nodisplay -r "maxNumCompThreads(1)" < addpath(genpath(~/kitaev))
+matlab -nodisplay -r "maxNumCompThreads(13)" < do_some_mcmc.m

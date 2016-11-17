@@ -2,17 +2,25 @@
 startTime = clock;
 
 problem.restart = true; %Whether to start from the last run
-problem.plotting = true; %used for real time debugging/diagnostics
+problem.plotting = false; %used for real time debugging/diagnostics
 
 problem.rmax = 15; %radius of honeycomb flake in plaquettes
-problem.s = 0.04; %stretch amount
+rmax = problem.rmax;
+problem.s = 0.04; % * (rmax + 1/2)/(15 + 1/2); %stretch amount
 problem.b = 10;   % magnetic grunesien parameter
-problem.stat_rate = 100; %How many proposals before recomputing statistics
+problem.stat_rate = 200; %How many proposals before recomputing statistics
 problem.plot_rate = 1; %how many statistics before plotting
 problem.max_batches = 2000;
-problem.max_count = 50000; %50,000
+problem.max_count = 100000; %50,000
 
-rmax = problem.rmax;
+
+% msi instructions
+% start a job
+% qsub -q small setup.pbs
+% cancel a job
+% qsig -s SIGINT 2689815.mesabim3.msi.umn.edu
+
+
 s = problem.s;
 b = problem.b;
 
@@ -27,22 +35,20 @@ Tc = .13/log(numplaq); disp(Tc)
 
 Tv = sort( [Tc*Trel, Tcomp] ); 
 
+%Tv = Tv(Tv>0.05)
+
 %Tv = Tv(1:5);
 emax = 12.0; bins = 200;
 Ev = (1:bins)'*emax/bins; limsE = Ev;
 
 format compact
-close all
+%close all
 
 %Main Loop
-
-for j = flip(15:numel(Tv))
+disp(['rmax = ',num2str(rmax)])
+disp(numel(Tv))
+for j = (1:numel(Tv))
    tic
-   if j<14
-       problem.restart = false;
-   else
-       problem.restart = true;
-   end
    outputs{j} = flux_controller_MCMC(problem,Tv(j));
    disp(j)
    toc
@@ -81,92 +87,97 @@ savePlots = true;
 Tvis = (Tv <= 3*Tc);
 prep_plots;
 
-  %I versus T and E (II)
-    hh=figure;%('Position',position);
-    hold on;
-    uimagesc(limsE,Tv(Tvis),II{2}(Tvis,:));
-    axis([0, emax, -inf, inf])
-    colorbar
-    caxis auto
-    hold off;
-    filename = ['stretch_comp_DOS_mcmc_finiteT_b_rmax_',num2str(round(rmax)),'_b_',num2str(round(b)),'_s_',num2str(1000*s)];
-    if savePlots
-        saveas(hh,filename)
-        print(hh, '-dpng', filename);
-        print(hh, '-depsc', filename);
-    end
-    
-      %I versus T and E (II)
-    hh=figure;%('Position',position);
-    hold on;
-    uimagesc(limsE,Tv(Tvis),(II{3}(Tvis,:)));
-    axis([0, emax, -inf, inf])
-    colorbar
-    caxis auto
-    hold off;
-    filename = ['stretch_comp_Ixx_mcmc_finiteT_b_rmax_',num2str(round(rmax)),'_b_',num2str(round(b)),'_s_',num2str(1000*s)];
-    if savePlots
-        saveas(hh,filename)
-        print(hh, '-dpng', filename);
-        print(hh, '-depsc', filename);
-    end
-    
-      %I versus T and E (II)
-    hh=figure;%('Position',position);
-    hold on;
-    uimagesc(limsE,Tv(Tvis),(II{4}(Tvis,:)));
-    axis([0, emax, -inf, inf])
-    colorbar
-    caxis auto
-    hold off;
-    filename = ['stretch_comp_Ixy_mcmc_finiteT_b_rmax_',num2str(round(rmax)),'_b_',num2str(round(b)),'_s_',num2str(1000*s)];
-    if savePlots
-        saveas(hh,filename)
-        print(hh, '-dpng', filename);
-        print(hh, '-depsc', filename);
-    end
-    
-      %I versus T and E (II)
-    hh=figure;%('Position',position);
-    hold on;
-    uimagesc(limsE,Tv(Tvis),(II{5}(Tvis,:)));
-    axis([0, emax, -inf, inf])
-    colorbar
-    caxis auto
-    hold off;
-    filename = ['stretch_comp_Ixy2_mcmc_finiteT_b_rmax_',num2str(round(rmax)),'_b_',num2str(round(b)),'_s_',num2str(1000*s)];
-    if savePlots
-        saveas(hh,filename)
-        print(hh, '-dpng', filename);
-        print(hh, '-depsc', filename);
-    end
-    %Energy versus T
-    hh=figure;
-    hold on;
-    plot(Tv(Tvis),Es(Tvis))
-    hold off;
-    filename = ['stretch_En_mcmc_rmax_',num2str(rmax),'_b_',num2str(round(b)),...
-        '_s_',num2str(round(1000*s))];
-    if savePlots
-        saveas(hh,filename)
-        print(hh, '-dpng', filename);
-        print(hh, '-depsc', filename);
-    end
-    %p versus T
-    hh=figure;
-    hold on;
-    plot(Tv(Tvis),ps(Tvis))
-    hold off;
-    filename = ['stretch_ps_mcmc_rmax_',num2str(rmax),'_b_',num2str(round(b)),...
-        '_s_',num2str(round(1000*s))];
-    if savePlots
-        saveas(hh,filename)
-        print(hh, '-dpng', filename);
-        print(hh, '-depsc', filename);
-    end
+%     %I versus T and E (II)
+%     hh=figure;%('Position',position);
+%     hold on;
+%     pcolor(limsE,Tv(Tvis),II{2}(Tvis,:));
+%     axis([0, emax, -inf, inf])
+%     colorbar
+%     shading flat
+%     caxis auto
+%     hold off;
+%     filename = ['stretch_comp_DOS_mcmc_finiteT_b_rmax_',num2str(round(rmax)),'_b_',num2str(round(b)),'_s_',num2str(1000*s)];
+%     if savePlots
+%         saveas(hh,filename)
+%         print(hh, '-dpng', filename);
+%         print(hh, '-depsc', filename);
+%     end
+%     
+%       %I versus T and E (II)
+%     hh=figure;%('Position',position);
+%     hold on;
+%     pcolor(limsE,Tv(Tvis),(II{3}(Tvis,:)));
+%     axis([0, emax, -inf, inf])
+%     colorbar
+%     shading flat
+%     caxis auto
+%     hold off;
+%     filename = ['stretch_comp_Ixx_mcmc_finiteT_b_rmax_',num2str(round(rmax)),'_b_',num2str(round(b)),'_s_',num2str(1000*s)];
+%     if savePlots
+%         saveas(hh,filename)
+%         print(hh, '-dpng', filename);
+%         print(hh, '-depsc', filename);
+%     end
+%     
+%       %I versus T and E (II)
+%     hh=figure;%('Position',position);
+%     hold on;
+%     pcolor(limsE,Tv(Tvis),(II{4}(Tvis,:)));
+%     axis([0, emax, -inf, inf])
+%     colorbar
+%     shading flat
+%     caxis auto
+%     hold off;
+%     filename = ['stretch_comp_Ixy_mcmc_finiteT_b_rmax_',num2str(round(rmax)),'_b_',num2str(round(b)),'_s_',num2str(1000*s)];
+%     if savePlots
+%         saveas(hh,filename)
+%         print(hh, '-dpng', filename);
+%         print(hh, '-depsc', filename);
+%     end
+%     
+%       %I versus T and E (II)
+%     hh=figure;%('Position',position);
+%     hold on;
+%     pcolor(limsE,Tv(Tvis),(II{5}(Tvis,:)));
+%     axis([0, emax, -inf, inf])
+%     colorbar
+%     shading flat
+%     caxis auto
+%     hold off;
+%     filename = ['stretch_comp_Ixy2_mcmc_finiteT_b_rmax_',num2str(round(rmax)),'_b_',num2str(round(b)),'_s_',num2str(1000*s)];
+%     if savePlots
+%         saveas(hh,filename)
+%         print(hh, '-dpng', filename);
+%         print(hh, '-depsc', filename);
+%     end
+% 
+%     %Energy versus T
+%     hh=figure;
+%     hold on;
+%     plot(Tv(Tvis),Es(Tvis))
+%     hold off;
+%     filename = ['stretch_En_mcmc_rmax_',num2str(rmax),'_b_',num2str(round(b)),...
+%         '_s_',num2str(round(1000*s))];
+%     if savePlots
+%         saveas(hh,filename)
+%         print(hh, '-dpng', filename);
+%         print(hh, '-depsc', filename);
+%     end
+%     %p versus T
+%     hh=figure;
+%     hold on;
+%     plot(Tv(Tvis),ps(Tvis))
+%     hold off;
+%     filename = ['stretch_ps_mcmc_rmax_',num2str(rmax),'_b_',num2str(round(b)),...
+%         '_s_',num2str(round(1000*s))];
+%     if savePlots
+%         saveas(hh,filename)
+%         print(hh, '-dpng', filename);
+%         print(hh, '-depsc', filename);
+%     end
 
     %Save the data for plotting later
-    save(['stretch_flux_mcmc1_rmax_',num2str(round(rmax)),'_b_',num2str(round(b)),'_s_',num2str(1000*s)]...
+    save(['stretch_flux_mcmc1_rmax_',num2str(round(rmax)),'_b_',num2str(round(b)),'_s_',num2str(round(1000*s))]...
         ,'Tc','Tv','Tvis','Ev','II','Ier','outputs','Es','ps')
     
 stopTime = clock;

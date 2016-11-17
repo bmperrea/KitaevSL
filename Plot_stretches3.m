@@ -156,12 +156,12 @@ hh=figure;%('Position',position);
     
     
     
-rmax = 18;
+rmax = 15;
 s = .04;
-fileName = ['stretch_flux2_rmax_',num2str(round(rmax)),'_b_',num2str(round(b)),'_s_',num2str(1000*s)];
-load(['../',fileName])
-disp(Ev)
-ZZ = getPartitionFunction( II{2}, Ev, Tv );
+fileName = ['stretch_flux_mcmc1_rmax_',num2str(round(rmax)),'_b_',num2str(round(b)),'_s_',num2str(1000*s)];
+load(fileName)
+disp(max(Ev))
+%ZZ = getPartitionFunction( II{2}, Ev, Tv );
 %6*(rmax+1)^2,
     %Temp comparison
 %     h0 = openfig('stretch_comp_xy2_b_10_n_30_maxn_100.fig');
@@ -181,15 +181,15 @@ ZZ = getPartitionFunction( II{2}, Ev, Tv );
     es = (0 <= Ev & Ev <= 5);
     Tvis = (Tv <= 2*Tc);
    % pcolor(limsE(es),Tv(Tvis),norma(II{5}(Tvis,es),2));
-    pcolor(limsE(es),Tv(Tvis), II{5}(Tvis,es) ./ repmat(ZZ(Tvis),1,sum(es)) );
+    pcolor(limsE(es),Tv(Tvis), II{5}(Tvis,es) );
     axis([min(limsE(es)), max(limsE(es)), -inf,inf])
     colorbar
     colormap hot
     shading flat
-    m3 = max(max( II{5}(Tvis,es) ./ repmat(ZZ(Tvis),1,sum(es)) ));
+    m3 = max(max( II{5}(Tvis,es) ));
     caxis([0,m3])
-    xlabel('\omega');
-    ylabel('T');
+    xlabel('\omega/J');
+    ylabel('T/J');
     hold off;
     filename = ['stretch_comp_Ixy2_finiteT_b_rmax_',num2str(round(rmax)),'_b_',num2str(round(b)),'_s_',num2str(1000*s),'_special'];
     if savePlots

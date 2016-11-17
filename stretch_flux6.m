@@ -25,8 +25,8 @@ function [Ev,Itt,Its,bfs,bfserr,Endist,pv] ...
 %%%%%%%(linear change in r as you go outward from center)
 c = s/(sqrt(3)*rmax+sqrt(3)/2);
 
-Bfield = -8*c*b;
-E0 = 3*sqrt(abs(Bfield));
+Bfield = -4*c*b;
+E0 = 3*sqrt(2*abs(Bfield));
 disp([Bfield,E0])
 
 %initial data
