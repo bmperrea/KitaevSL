@@ -47,10 +47,16 @@ format compact
 %Main Loop
 disp(['rmax = ',num2str(rmax)])
 disp(numel(Tv))
+
+%Shuffle the indices to help the task distribution be more even
+% on the parallel cores
+order = randperm(numel(Tv));
+
+outputs = cell(1,numel(Tv));
 for j = (1:numel(Tv))
    tic
-   outputs{j} = flux_controller_MCMC(problem,Tv(j));
-   disp(j)
+   outputs{order(j)} = flux_controller_MCMC(problem,Tv(order(j)));
+   disp(order(j))
    toc
 end
 
