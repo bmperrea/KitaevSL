@@ -64,10 +64,6 @@ is the name of the job returned after you started (also in your email).
 Otherwise you can just watch the .o and .e (output and error) files
 until it's done and then you collect the data.
 
-Finally, the folders flux_interactions , strain_project_stuff , plotting_utils and
-old_methods contain work that was specifically useful for the original project
-but has been kept for reference.
-
 Good luck.
 
 bmperrea
