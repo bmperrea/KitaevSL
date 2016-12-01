@@ -774,51 +774,51 @@ end
         
     end
 
-    function in = ind(r,l)
-        %if nargin == 2
-            in = 6*r^2 + l;
-       % end
-        %This puts 1 -> 1 , 2->1 , 3->2 , 4->2 ,...
-        in = floor( (in+1)/2 );
-%         if in == 13
-%             m = fk;
+%     function in = ind(r,l)
+%         %if nargin == 2
+%             in = 6*r^2 + l;
+%        % end
+%         %This puts 1 -> 1 , 2->1 , 3->2 , 4->2 ,...
+%         in = floor( (in+1)/2 );
+% %         if in == 13
+% %             m = fk;
+% %         end
+%     end
+% 
+%     function r1 = rr(r,k,m,l1)
+%         interc = { [0,0]          , [sqrt(3),-1]/2, [sqrt(3),-3]/2 , [0,-2]         , [-sqrt(3),-3]/2 , [-sqrt(3),-1]/2 };
+%         sloper = { [-sqrt(3),3]/2 , [sqrt(3),3]/2 , [sqrt(3),0]    , [sqrt(3),-3]/2 , [-sqrt(3),-3]/2 , [-sqrt(3),0]    };
+%         slopem = { [sqrt(3),0]    , [sqrt(3),-3]/2, [-sqrt(3),-3]/2, [-sqrt(3),0]   , [-sqrt(3),3]/2  , [sqrt(3),3]/2   };
+%         slopel = { [sqrt(3),-1]/2 , [0,-1]        , [-sqrt(3),-1]/2, [-sqrt(3),1]/2 , [0,1]           , [sqrt(3),1]/2   };
+%         r1 = interc{k+1} + r*sloper{k+1} + m*slopem{k+1} + (l1)*slopel{k+1} + [0,1];
+%     end
+% 
+%     function u = uu(r1)
+%         vec = r1;
+%         x = vec(1); y = vec(2);
+%         u = [2*x*y,x^2-y^2];
+%     end
+% 
+%     function j = jj(r1,r2)
+%         j = 1 + b - b*norm( dd(r1,r2) );      
+%         if j <= 0
+%             error('j is gone!')
 %         end
-    end
-
-    function r1 = rr(r,k,m,l1)
-        interc = { [0,0]          , [sqrt(3),-1]/2, [sqrt(3),-3]/2 , [0,-2]         , [-sqrt(3),-3]/2 , [-sqrt(3),-1]/2 };
-        sloper = { [-sqrt(3),3]/2 , [sqrt(3),3]/2 , [sqrt(3),0]    , [sqrt(3),-3]/2 , [-sqrt(3),-3]/2 , [-sqrt(3),0]    };
-        slopem = { [sqrt(3),0]    , [sqrt(3),-3]/2, [-sqrt(3),-3]/2, [-sqrt(3),0]   , [-sqrt(3),3]/2  , [sqrt(3),3]/2   };
-        slopel = { [sqrt(3),-1]/2 , [0,-1]        , [-sqrt(3),-1]/2, [-sqrt(3),1]/2 , [0,1]           , [sqrt(3),1]/2   };
-        r1 = interc{k+1} + r*sloper{k+1} + m*slopem{k+1} + (l1)*slopel{k+1} + [0,1];
-    end
-
-    function u = uu(r1)
-        vec = r1;
-        x = vec(1); y = vec(2);
-        u = [2*x*y,x^2-y^2];
-    end
-
-    function j = jj(r1,r2)
-        j = 1 + b - b*norm( dd(r1,r2) );      
-        if j <= 0
-            error('j is gone!')
-        end
-    end
-
-    function d = dd(r1,r2,in)
-    %The third argument is optional
-        du = ( uu(r1) - uu(r2) );
-        d1 = r1 - r2 + c*du;
-        if nargin == 3
-            d = d1(in);
-        else
-            d = d1;
-        end        
-        if c*norm(du) > 1
-            error('too much strain')
-        end
-    end
+%     end
+% 
+%     function d = dd(r1,r2,in)
+%     %The third argument is optional
+%         du = ( uu(r1) - uu(r2) );
+%         d1 = r1 - r2 + c*du;
+%         if nargin == 3
+%             d = d1(in);
+%         else
+%             d = d1;
+%         end        
+%         if c*norm(du) > 1
+%             error('too much strain')
+%         end
+%     end
 
     function draw_line(p1,p2,h)
         p1 = p1 + c*uu(p1);
@@ -868,112 +868,6 @@ end
         end
     end
 
-%     function varargout = ds2nfu(varargin)
-%         % DS2NFU  Convert data space units into normalized figure units. 
-%         %
-%         % [Xf, Yf] = DS2NFU(X, Y) converts X,Y coordinates from
-%         % data space to normalized figure units, using the current axes.  This is
-%         % useful as input for ANNOTATION.  
-%         %
-%         % POSf = DS2NFU(POS) converts 4-element position vector, POS from
-%         % data space to normalized figure units, using the current axes.  The
-%         % position vector has the form [Xo Yo Width Height], as defined here:
-%         %
-%         %      web(['jar:file:D:/Applications/MATLAB/R2006a/help/techdoc/' ...
-%         %           'help.jar!/creating_plots/axes_pr4.html'], '-helpbrowser')
-%         %
-%         % [Xf, Yf] = DS2NFU(HAX, X, Y) converts X,Y coordinates from
-%         % data space to normalized figure units, on specified axes HAX.  
-%         %
-%         % POSf = DS2NFU(HAX, POS) converts 4-element position vector, POS from
-%         % data space to normalized figure units, using the current axes. 
-%         %
-%         % Ex.
-%         %    % Create some data
-%         % 		t = 0:.1:4*pi;
-%         % 		s = sin(t);
-%         %
-%         %    % Add an annotation requiring (x,y) coordinate vectors
-%         % 		plot(t,s);ylim([-1.2 1.2])
-%         % 		xa = [1.6 2]*pi;
-%         % 		ya = [0 0];
-%         % 		[xaf,yaf] = ds2nfu(xa,ya);
-%         % 		annotation('arrow',xaf,yaf)
-%         %
-%         %    % Add an annotation requiring a position vector
-%         % 		pose = [4*pi/2 .9 pi .2];
-%         % 		posef = ds2nfu(pose);
-%         % 		annotation('ellipse',posef)
-%         %
-%         %    % Add annotations on a figure with multiple axes
-%         % 		figure;
-%         % 		hAx1 = subplot(211);
-%         % 		plot(t,s);ylim([-1.2 1.2])
-%         % 		hAx2 = subplot(212);
-%         % 		plot(t,-s);ylim([-1.2 1.2])
-%         % 		[xaf,yaf] = ds2nfu(hAx1,xa,ya);
-%         % 		annotation('arrow',xaf,yaf)
-%         % 		pose = [4*pi/2 -1.1 pi .2];
-%         % 		posef = ds2nfu(hAx2,pose);
-%         % 		annotation('ellipse',posef)
-% 
-%         % Michelle Hirsch
-%         % mhirsch@mathworks.com
-%         % Copyright 2006-2014 The MathWorks, Inc
-% 
-%         %% Process inputs
-%         narginchk(1, 3)
-% 
-%         % Determine if axes handle is specified
-%         if length(varargin{1})== 1 && ishandle(varargin{1}) && strcmp(get(varargin{1},'type'),'axes')	
-%             hAx = varargin{1};
-%             varargin = varargin(2:end);
-%         else
-%             hAx = gca;
-%         end;
-% 
-%         errmsg = ['Invalid input.  Coordinates must be specified as 1 four-element \n' ...
-%             'position vector or 2 equal length (x,y) vectors.'];
-% 
-%         % Proceed with remaining inputs
-%         if length(varargin)==1	% Must be 4 elt POS vector
-%             pos = varargin{1};
-%             if length(pos) ~=4, 
-%                 error(errmsg);
-%             end;
-%         else
-%             [x,y] = deal(varargin{:});
-%             if length(x) ~= length(y)
-%                 error(errmsg)
-%             end
-%         end
-% 
-% 
-%         %% Get limits
-%         axun = get(hAx,'Units');
-%         set(hAx,'Units','normalized');
-%         axpos = get(hAx,'Position');
-%         axlim = axis(hAx);
-%         axwidth = diff(axlim(1:2));
-%         axheight = diff(axlim(3:4));
-% 
-% 
-%         %% Transform data
-%         if exist('x','var')
-%             varargout{1} = (x-axlim(1))*axpos(3)/axwidth + axpos(1);
-%             varargout{2} = (y-axlim(3))*axpos(4)/axheight + axpos(2);
-%         else
-%             pos(1) = (pos(1)-axlim(1))/axwidth*axpos(3) + axpos(1);
-%             pos(2) = (pos(2)-axlim(3))/axheight*axpos(4) + axpos(2);
-%             pos(3) = pos(3)*axpos(3)/axwidth;
-%             pos(4) = pos(4)*axpos(4)/axheight;
-%             varargout{1} = pos;
-%         end
-% 
-%         %% Restore axes units
-%         set(hAx,'Units',axun)
-% 
-%     end
 
 
 end

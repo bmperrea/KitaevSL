@@ -1,8 +1,8 @@
 rmax = 15;
-s = 0.04;
+s = 0.00;
 b = 10;
 flag = -1; %(don't plot)
-nmax = 5;
+nmax = 1;
 ns = 3*nmax*(nmax+1) + 1;
 
 numplaq = 1 + 3*rmax*(rmax+1); %The number of plaquettes
